@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🇰🇭 Khmer Calendar Telegram Bot • Chhankitek</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 30, 49, 0.78);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #2563eb;
+      --accent-glow: rgba(37, 99, 235, 0.35);
+      --gold: #f59e0b;
+      --gold-glow: rgba(245, 158, 11, 0.25);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --green: #10b981;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Kantumruy Pro', 'Outfit', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #172554 0%, #090d16 80%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+    .container {
+      max-width: 680px;
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 28px;
+      padding: 40px 32px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 35px var(--accent-glow);
+      text-align: center;
+      position: relative;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      margin-bottom: 24px;
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 28px;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+    .card-header {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .date-row {
+      margin-bottom: 14px;
+    }
+    .date-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .date-value {
+      font-size: 17px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    .date-lunar {
+      font-size: 18px;
+      font-weight: 600;
+      color: #38bdf8;
+    }
+    .status-tag {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      color: #60a5fa;
+      margin-top: 6px;
+    }
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 520px) {
+      .btn-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 18px var(--accent-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(37, 99, 235, 0.5);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+    }
+    .setup-guide {
+      background: rgba(37, 99, 235, 0.08);
+      border: 1px dashed rgba(37, 99, 235, 0.35);
+      border-radius: 16px;
+      padding: 18px;
+      text-align: left;
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+    .setup-guide strong {
+      color: #93c5fd;
+    }
+    .footer {
+      margin-top: 24px;
+      font-size: 12px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Vercel Serverless • Online
+    </div>
+
+    <h1>🇰🇭 Khmer Calendar Telegram Bot</h1>
+    <p class="subtitle">ប្រតិទិនចន្ទគតិខ្មែរ • Lunisolar Calculations & Automated Broadcast</p>
+
+    <div class="card">
+      <div class="card-header">
+        <span>⚡</span> ប្រព័ន្ធបម្រើសេវាសកម្ម (Status Overview)
+      </div>
+      <div class="date-row">
+        <div class="date-label">Timezone (ម៉ោងកម្ពុជា):</div>
+        <div class="date-value">Asia/Phnom_Penh (UTC+7)</div>
+      </div>
+      <div class="date-row">
+        <div class="date-label">ស្ថាបត្យកម្ម (Architecture):</div>
+        <div class="date-value">Vercel Serverless Functions + Vercel Cron</div>
+      </div>
+      <div class="status-tag">
+        ✅ Webhook & Cron Endpoints Ready
+      </div>
+    </div>
+
+    <div class="btn-grid">
+      <a href="/api/set-webhook" class="btn btn-primary" target="_blank">
+        ⚡ 1. Set Telegram Webhook
+      </a>
+      <a href="https://t.me/BotFather" class="btn btn-secondary" target="_blank">
+        🤖 Open @BotFather
+      </a>
+      <a href="/api/cron" class="btn btn-secondary" target="_blank">
+        ⏰ Test Daily Cron (/api/cron)
+      </a>
+      <a href="https://github.com/jura61361-tech/khmer-calender" class="btn btn-secondary" target="_blank">
+        📂 GitHub Repository
+      </a>
+    </div>
+
+    <div class="setup-guide">
+      <strong>🚀 ជំហានបន្ទាប់ (Next Step):</strong><br>
+      ចុចលើប៊ូតុង <strong>"1. Set Telegram Webhook"</strong> ខាងលើ ដើម្បីភ្ជាប់ Telegram មកកាន់ប្រព័ន្ធ Vercel នេះ។ Telegram នឹងចាប់ផ្ដើមផ្ញើសារមកកាន់ Bot ដោយស្វ័យប្រវត្តិ!
+    </div>
+
+    <div class="footer">
+      Powered by Node.js & grammY • Deployed on Vercel
+    </div>
+  </div>
+</body>
+</html>
