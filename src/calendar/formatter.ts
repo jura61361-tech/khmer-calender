@@ -20,9 +20,13 @@ export function escapeHtml(str: string): string {
  * Gather full calendar report for a given date
  */
 export function getCalendarDayReport(year: number, month: number, day: number): CalendarDayReport {
-  const holyDay = checkHolyDay(year, month, day);
+  const safeYear = Number.isFinite(year) && year > 0 ? Math.floor(year) : new Date().getFullYear();
+  const safeMonth = Number.isFinite(month) && month >= 1 && month <= 12 ? Math.floor(month) : (new Date().getMonth() + 1);
+  const safeDay = Number.isFinite(day) && day >= 1 && day <= 31 ? Math.floor(day) : new Date().getDate();
+
+  const holyDay = checkHolyDay(safeYear, safeMonth, safeDay);
   const details = holyDay.details!;
-  const holidays = getHolidaysForDate(year, month, day);
+  const holidays = getHolidaysForDate(safeYear, safeMonth, safeDay);
 
   return { details, holyDay, holidays };
 }

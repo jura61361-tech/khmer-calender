@@ -1,10 +1,10 @@
 import { Context, InlineKeyboard } from 'grammy';
-import { DateTime } from 'luxon';
+import { getSafeNow } from '../calendar/lunar.js';
 import { getUpcomingHolidays } from '../calendar/holidays.js';
 import { formatUpcomingHolidays } from '../calendar/formatter.js';
 
 export async function handleHolidayCommand(ctx: Context, timezone = 'Asia/Phnom_Penh'): Promise<void> {
-  const now = DateTime.now().setZone(timezone);
+  const now = getSafeNow(timezone);
   const upcoming = getUpcomingHolidays(now, 4, true);
 
   const message = formatUpcomingHolidays(upcoming);

@@ -1,10 +1,10 @@
 import { Context, InlineKeyboard } from 'grammy';
-import { DateTime } from 'luxon';
+import { getSafeNow } from '../calendar/lunar.js';
 import { checkHolyDay, getUpcomingHolyDays } from '../calendar/holyDays.js';
 import { formatUpcomingHolyDays } from '../calendar/formatter.js';
 
 export async function handleSilCommand(ctx: Context, timezone = 'Asia/Phnom_Penh'): Promise<void> {
-  const now = DateTime.now().setZone(timezone);
+  const now = getSafeNow(timezone);
   const todayCheck = checkHolyDay(now.year, now.month, now.day);
   const upcoming = getUpcomingHolyDays(now, 4, true);
 

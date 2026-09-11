@@ -61,9 +61,14 @@ export function createBot(config: BotConfig): Bot {
   });
 
   // Global error handler
-  bot.catch((err) => {
+  bot.catch(async (err) => {
     const ctx = err.ctx;
     console.error(`[Bot] Error while handling update ${ctx.update.update_id}:`, err.error);
+    try {
+      if (ctx.chat) {
+        await ctx.reply('⚠️ សូមអភ័យទោស ប្រព័ន្ធមានបញ្ហាបន្តិចបន្តួច។ សូមព្យាយាមម្ដងទៀត។');
+      }
+    } catch {}
   });
 
   return bot;

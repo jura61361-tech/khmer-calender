@@ -1,9 +1,9 @@
 import { Context, InlineKeyboard } from 'grammy';
-import { DateTime } from 'luxon';
+import { getSafeNow } from '../calendar/lunar.js';
 import { getCalendarDayReport, formatDailyBroadcast } from '../calendar/formatter.js';
 
 export async function handleTodayCommand(ctx: Context, timezone = 'Asia/Phnom_Penh'): Promise<void> {
-  const now = DateTime.now().setZone(timezone);
+  const now = getSafeNow(timezone);
   const report = getCalendarDayReport(now.year, now.month, now.day);
   const message = formatDailyBroadcast(report);
 

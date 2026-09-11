@@ -23,7 +23,11 @@ export interface UpcomingHolyDay {
  * Check whether a specific date is a Buddhist Holy Day (ថ្ងៃសីល - Thngai Sil)
  */
 export function checkHolyDay(year: number, month: number, day: number): HolyDayCheckResult {
-  const current = getKhmerDate(year, month, day);
+  const safeYear = Number.isFinite(year) && year > 0 ? Math.floor(year) : new Date().getFullYear();
+  const safeMonth = Number.isFinite(month) && month >= 1 && month <= 12 ? Math.floor(month) : (new Date().getMonth() + 1);
+  const safeDay = Number.isFinite(day) && day >= 1 && day <= 31 ? Math.floor(day) : new Date().getDate();
+
+  const current = getKhmerDate(safeYear, safeMonth, safeDay);
   const { moonPhase, dayNumber, dayNumberKhmer } = current;
 
   // 1. ៨កើត (8th Waxing)

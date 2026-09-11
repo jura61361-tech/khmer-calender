@@ -14,22 +14,21 @@ function getWebhookHandler() {
   return cachedHandler;
 }
 
-/**
- * Vercel Serverless Function entry point for Telegram Webhook
- */
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   try {
     const webhookHandler = getWebhookHandler();
     return await webhookHandler(req, res);
   } catch (err: any) {
     console.error('[Vercel Webhook Error]:', err?.message || err);
-    res.statusCode = 500;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(
-      JSON.stringify({
-        ok: false,
-        error: err?.message || 'Internal server error in bot webhook'
-      })
-    );
+    if (!res.writableEnded) {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(
+        JSON.stringify({
+          ok: false,
+          error: err?.message || 'Error handling update'
+        })
+      );
+    }
   }
 }

@@ -2,6 +2,7 @@ import cron, { ScheduledTask } from 'node-cron';
 import { Bot } from 'grammy';
 import { DateTime } from 'luxon';
 import { BotConfig } from './config.js';
+import { getSafeNow } from './calendar/lunar.js';
 import { getCalendarDayReport, formatDailyBroadcast } from './calendar/formatter.js';
 
 /**
@@ -13,7 +14,7 @@ export async function broadcastDailyCalendar(
   timezone = 'Asia/Phnom_Penh'
 ): Promise<boolean> {
   try {
-    const now = DateTime.now().setZone(timezone);
+    const now = getSafeNow(timezone);
     const report = getCalendarDayReport(now.year, now.month, now.day);
     const message = formatDailyBroadcast(report);
 

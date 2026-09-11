@@ -83,21 +83,46 @@ export interface KhmerLunarDetails {
   formattedPhaseEnglish: string; // e.g. 8th Waning Moon (រោច)
 }
 
+export function getSafeNow(timezone?: string): DateTime {
+  let cleanTz = typeof timezone === 'string' ? timezone.trim().replace(/['"]/g, '') : '';
+  if (!cleanTz) {
+    cleanTz = 'Asia/Phnom_Penh';
+  }
+
+  try {
+    const dt = DateTime.now().setZone(cleanTz);
+    if (dt.isValid) return dt;
+  } catch {}
+
+  try {
+    // Cambodia is UTC+7 with no DST. UTC+7 is always supported everywhere.
+    const dt = DateTime.now().setZone('UTC+7');
+    if (dt.isValid) return dt;
+  } catch {}
+
+  return DateTime.now();
+}
+
 /**
  * Convert a year, month (1-12), day into complete Khmer Lunar Details
  */
 export function getKhmerDate(year: number, month: number, day: number): KhmerLunarDetails {
-  const khmerRaw = momentkh.fromGregorian(year, month, day);
+  const safeYear = Number.isFinite(year) && year > 0 ? Math.floor(year) : new Date().getFullYear();
+  const safeMonth = Number.isFinite(month) && month >= 1 && month <= 12 ? Math.floor(month) : (new Date().getMonth() + 1);
+  const safeDay = Number.isFinite(day) && day >= 1 && day <= 31 ? Math.floor(day) : new Date().getDate();
+
+  const khmerRaw = momentkh.fromGregorian(safeYear, safeMonth, safeDay);
   const k = khmerRaw.khmer;
   const g = khmerRaw.gregorian;
 
   // Day of week from Gregorian (0 = Sun ... 6 = Sat)
-  // DateTime or raw
-  const dt = DateTime.fromObject({ year, month, day }, { zone: 'Asia/Phnom_Penh' });
-  // In luxon weekday is 1=Mon .. 7=Sun, convert to 0=Sun..6=Sat
-  const dayOfWeek = dt.weekday % 7;
-  const weekdayInfo = WEEKDAYS[dayOfWeek];
-  const monthInfo = GREGORIAN_MONTHS[month - 1];
+  let dt = DateTime.fromObject({ year: safeYear, month: safeMonth, day: safeDay }, { zone: 'Asia/Phnom_Penh' });
+  if (!dt.isValid) {
+    dt = DateTime.fromObject({ year: safeYear, month: safeMonth, day: safeDay }, { zone: 'UTC+7' });
+  }
+  const dayOfWeek = dt.isValid ? dt.weekday % 7 : new Date(safeYear, safeMonth - 1, safeDay).getDay();
+  const weekdayInfo = WEEKDAYS[dayOfWeek] || WEEKDAYS[0];
+  const monthInfo = GREGORIAN_MONTHS[safeMonth - 1] || GREGORIAN_MONTHS[0];
 
   const dayKh = toKhmerDigits(day);
   const yearKh = toKhmerDigits(year);
